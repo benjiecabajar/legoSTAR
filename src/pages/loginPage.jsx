@@ -27,8 +27,8 @@ function LoginPage({ onLogin }) {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <img src={logo} alt="LegoStar POS Logo" className="login-logo" />
-          <h1 className="login-title">LegoStar POS</h1>
+          <img src={logo} alt="PastryStar POS Logo" className="login-logo" />
+          <h1 className="login-title">PastryStar POS</h1>
           <p className="login-subtitle">Point of Sales System</p>
         </div>
 
@@ -68,7 +68,7 @@ function LoginPage({ onLogin }) {
 
         <div className="login-footer">
           <p className="login-footer-text">
-            © 2026 LegoStar POS. All rights reserved.
+            © 2026 PastryStar POS. All rights reserved.
           </p>
         </div>
       </div>

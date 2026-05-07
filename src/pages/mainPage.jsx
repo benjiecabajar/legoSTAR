@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import '../styles/mainPage.css'
-import Sidebar from '../components/sideBar'
+import Sidebar from '../components/Sidebar'
 
 function App({ onLogout }) {
   return (
@@ -12,4 +12,3 @@ function App({ onLogout }) {
   )
 }
 export default App
-
