@@ -1,0 +1,128 @@
+/* Modern Minimalist Login Styles */
+
+.login-container {
+  min-height: 100vh;
+  background: #f5f7fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 32px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+.login-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.login-logo {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 24px;
+}
+
+.login-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+  color: #666;
+  font-size: 15px;
+  margin: 0;
+  font-weight: 400;
+}
+
+.login-form {
+  margin-bottom: 32px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: block;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 2px solid #e0e0e0;
+  font-size: 16px;
+  color: #1a1a1a;
+  background: transparent;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.form-input:focus {
+  border-bottom-color: #1a1a1a;
+}
+
+.form-input::placeholder {
+  color: #bbb;
+}
+
+.login-button {
+  width: 100%;
+  padding: 14px 24px;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 16px;
+}
+
+.login-button:hover {
+  background: #333;
+  transform: scale(0.98);
+}
+
+.login-footer {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.login-footer-text {
+  color: #999;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 32px 24px;
+  }
+  
+  .login-title {
+    font-size: 28px;
+  }
+  
+  .form-input {
+    font-size: 15px;
+  }
+}

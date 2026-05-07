@@ -1,0 +1,113 @@
+.sidebar {
+  width: 280px;
+  height: 100vh;
+  background-color: #fdfdfd;
+  padding: 20px 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar-logo {
+  width: 160px;
+  height: auto;
+  display: block;
+  margin: 0 auto 40px auto;
+  padding: 10px;
+}
+
+.sidebar-nav {
+  height: 100%;
+}
+
+.sidebar-section {
+  margin-bottom: 30px;
+  padding: 0 15px;
+}
+
+.sidebar-section-title {
+  color: #000000;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 15px 0;
+  padding: 0 5px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 8px;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  margin: 0;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 10px 15px;
+  color: #242424;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  margin: 2px 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sidebar-link:hover {
+  background-color: #2d5aa0;
+  color: #ffffff;
+  padding-left: 20px;
+  transform: translateX(2px);
+}
+
+.sidebar-link:active {
+  background-color: #1e3f73;
+  color: #ffffff;
+}
+
+.sidebar-logout {
+  margin-top: auto;
+  padding: 20px 15px 30px 15px;
+  border-top: 1px solid #333;
+}
+
+.sidebar-logout-button {
+  width: 100%;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.sidebar-logout-button:hover {
+  background: linear-gradient(135deg, #c82333 0%, #a02622 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+}
+
+.sidebar-logout-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Adjust main content to account for sidebar */
+body {
+  margin: 0;
+}
