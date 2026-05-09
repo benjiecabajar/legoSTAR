@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { fmt } from '../data/products'
 import { ShoppingCart, Trash2, X, CreditCard } from 'lucide-react'
 
-export default function CartPanel({ cart, products, onAdd, onChangeQty, onRemove, onClear, onCheckout }) {
+export default function CartPanel({ cart, products, onChangeQty, onRemove, onClear, onCheckout }) {
   const [discount, setDiscount] = useState('')
   const [tax,      setTax]      = useState('12')
   const [customer, setCustomer] = useState('')
@@ -50,7 +50,7 @@ export default function CartPanel({ cart, products, onAdd, onChangeQty, onRemove
         ) : cart.map(item => {
           const prod = products.find(p => p.id === item.id)
           return (
-            <div key={item.id} className="cart-item">
+            <div key={item.cartId} className="cart-item">
               <span className="cart-item-image-container" style={{ 
                 width: '40px', 
                 height: '40px', 
@@ -70,17 +70,24 @@ export default function CartPanel({ cart, products, onAdd, onChangeQty, onRemove
               <div className="cart-item-info">
                 <div className="cart-item-name" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
                 <div className="cart-item-sub">{fmt(item.price)} each</div>
+                {(item.drNumber || item.company) && (
+                  <div style={{ fontSize: '10px', color: 'var(--text-3)', display: 'flex', gap: '4px' }}>
+                    {item.drNumber && <span>DR: {item.drNumber}</span>}
+                    {item.drNumber && item.company && <span>·</span>}
+                    {item.company && <span>{item.company}</span>}
+                  </div>
+                )}
               </div>
               <div className="qty-ctrl">
-                <button className="qty-btn" onClick={() => onChangeQty(item.id, -1)}>−</button>
+                <button className="qty-btn" onClick={() => onChangeQty(item.cartId, -1)}>−</button>
                 <span className="qty-num">{item.qty}</span>
                 <button
                   className="qty-btn"
-                  onClick={() => onChangeQty(item.id, +1)}
+                  onClick={() => onChangeQty(item.cartId, +1)}
                   disabled={prod && item.qty >= prod.stock}
                 >+</button>
               </div>
-              <button className="remove-btn" onClick={() => onRemove(item.id)} title="Remove">
+              <button className="remove-btn" onClick={() => onRemove(item.cartId)} title="Remove">
                 <X size={16} />
               </button>
             </div>

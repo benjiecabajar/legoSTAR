@@ -10,6 +10,8 @@ import CartPanel       from './components/CartPanel'
 import AddItemModal    from './components/AddItemModal'
 import ReceiptModal    from './components/ReceiptModal'
 import ToastContainer  from './components/ToastContainer'
+import ItemCustomizeModal from './components/ItemCustomizeModal'
+import CompanyModal    from './components/CompanyModal'
 
 let _nextId = 100
 
@@ -19,38 +21,68 @@ export default function App() {
   const [cart,     setCart]     = useState([])
   const [sales,    setSales]    = useState([])
   const [addOpen,  setAddOpen]  = useState(false)
+  const [companyModalOpen, setCompanyModalOpen] = useState(false)
+  const [companies, setCompanies] = useState([
+    { name: 'None', address: '' },
+    { name: 'PastryStar', address: '123 Baker St, CDO' },
+    { name: 'LegoStar', address: 'Zone 7, Poblacion, Tagoloan' },
+    { name: 'SweetTreats', address: 'Market Site, Misamis Oriental' }
+  ])
+  const [customizingProduct, setCustomizingProduct] = useState(null)
+  const [drCounters, setDRCounters] = useState({
+    'None': 1,
+    'PastryStar': 1,
+    'LegoStar': 1,
+    'SweetTreats': 1
+  })
   const [receipt,  setReceipt]  = useState(null)
   const { toasts, toast } = useToast()
 
   // ── Cart actions ────────────────────────────────────────────
-  const addToCart = (id) => {
+  const openCustomizeModal = (id) => {
     const product = products.find(p => p.id === id)
     if (!product || product.stock === 0) return
+    setCustomizingProduct(product)
+  }
 
+  const confirmAddToCart = (data) => {
+    const { id, name, price, qty, image, drNumber, company } = data;
+    const companyData = companies.find(c => c.name === company);
+    
     setCart(prev => {
-      const existing = prev.find(c => c.id === id)
+      const cartId = `${id}-${price}-${drNumber}-${company}`
+      const existing = prev.find(c => c.cartId === cartId)
       if (existing) {
-        if (existing.qty >= product.stock) { toast('Max stock reached', 'error'); return prev }
-        return prev.map(c => c.id === id ? { ...c, qty: c.qty + 1 } : c)
+        const product = products.find(p => p.id === id)
+        if (existing.qty + qty > product.stock) { toast('Max stock reached', 'error'); return prev }
+        return prev.map(c => c.cartId === cartId ? { ...c, qty: c.qty + qty, address: companyData?.address } : c)
       }
-      return [...prev, { id, qty: 1, name: product.name, price: product.price, image: product.image }]
+      return [...prev, { cartId, id, qty, name, price, image, drNumber, company, address: companyData?.address }]
     })
-    toast(`${product.name} added`, 'success')
+
+    // Increment the DR counter for the specific company
+    setDRCounters(prev => ({
+      ...prev,
+      [company]: Math.max(prev[company], parseInt(drNumber) + 1)
+    }))
+
+    setCustomizingProduct(null)
+    toast(`${name} added`, 'success')
   }
 
-  const changeQty = (id, delta) => {
-    const product = products.find(p => p.id === id)
+  const changeQty = (cartId, delta) => {
     setCart(prev => {
-      const item = prev.find(c => c.id === id)
+      const item = prev.find(c => c.cartId === cartId)
       if (!item) return prev
+      const product = products.find(p => p.id === item.id)
       const newQty = item.qty + delta
-      if (newQty <= 0) return prev.filter(c => c.id !== id)
+      if (newQty <= 0) return prev.filter(c => c.cartId !== cartId)
       if (product && newQty > product.stock) { toast('Max stock reached', 'error'); return prev }
-      return prev.map(c => c.id === id ? { ...c, qty: newQty } : c)
+      return prev.map(c => c.cartId === cartId ? { ...c, qty: newQty } : c)
     })
   }
 
-  const removeFromCart = (id) => setCart(prev => prev.filter(c => c.id !== id))
+  const removeFromCart = (cartId) => setCart(prev => prev.filter(c => c.cartId !== cartId))
   const clearCart = () => setCart([])
 
   // ── Checkout ─────────────────────────────────────────────────
@@ -59,8 +91,8 @@ export default function App() {
 
     // Deduct stock
     setProducts(prev => prev.map(p => {
-      const item = cart.find(c => c.id === p.id)
-      return item ? { ...p, stock: Math.max(0, p.stock - item.qty) } : p
+      const totalQtyInCart = cart.filter(c => c.id === p.id).reduce((sum, item) => sum + item.qty, 0)
+      return totalQtyInCart > 0 ? { ...p, stock: Math.max(0, p.stock - totalQtyInCart) } : p
     }))
 
     const sale = {
@@ -115,6 +147,23 @@ export default function App() {
     toast('Product deleted', 'default')
   }
 
+  const handleAddCompany = (data) => {
+    const { name, address, nextDr } = data
+    if (!name || companies.some(c => c.name === name)) return
+    setCompanies(prev => [...prev, { name, address }])
+    setDRCounters(prev => ({ ...prev, [name]: nextDr }))
+    setCompanyModalOpen(false)
+    toast(`Company "${name}" added`, 'success')
+  }
+
+  const handleUpdateDR = (company, val) => {
+    setDRCounters(prev => ({
+      ...prev,
+      [company]: parseInt(val) || 1
+    }))
+    toast(`DR counter for ${company} updated`, 'success')
+  }
+
   // ── Render ────────────────────────────────────────────────────
   return (
     <div className="app-container" style={{ display: 'flex', height: '100vh' }}>
@@ -130,7 +179,7 @@ export default function App() {
           {/* Left panel */}
           <main className="panel-left">
             {view === 'pos' && (
-              <POSView products={products} onAdd={addToCart} />
+              <POSView products={products} onAdd={openCustomizeModal} />
             )}
             {view === 'inventory' && (
               <InventoryView
@@ -139,10 +188,14 @@ export default function App() {
                 onEditStock={handleEditStock}
                 onDelete={handleDelete}
                 onAddItem={() => setAddOpen(true)}
+                companies={companies}
+                onAddCompany={() => setCompanyModalOpen(true)}
+                drCounters={drCounters}
+                onUpdateDR={handleUpdateDR}
               />
             )}
             {view === 'sales' && (
-              <SalesView sales={sales} />
+              <SalesView sales={sales} onViewReceipt={setReceipt} />
             )}
           </main>
 
@@ -150,7 +203,6 @@ export default function App() {
           <CartPanel
             cart={cart}
             products={products}
-            onAdd={addToCart}
             onChangeQty={changeQty}
             onRemove={removeFromCart}
             onClear={clearCart}
@@ -160,6 +212,16 @@ export default function App() {
       </div>
       {/* Modals */}
       {addOpen  && <AddItemModal onSave={handleAddItem} onClose={() => setAddOpen(false)} />}
+      {companyModalOpen && <CompanyModal onSave={handleAddCompany} onClose={() => setCompanyModalOpen(false)} />}
+      {customizingProduct && (
+        <ItemCustomizeModal 
+          product={customizingProduct} 
+          onConfirm={confirmAddToCart} 
+          onClose={() => setCustomizingProduct(null)} 
+          drCounters={drCounters}
+          companies={companies}
+        />
+      )}
       {receipt  && <ReceiptModal sale={receipt} onClose={() => setReceipt(null)} />}
 
       {/* Toasts */}
